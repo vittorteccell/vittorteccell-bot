@@ -1,31 +1,20 @@
 import os
 import sqlite3
-from http.server import HTTPServer, BaseHTTPRequestHandler
-import threading
+from flask import Flask
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
     CallbackQueryHandler,
-    MessageHandler,
-    filters,
     ContextTypes,
 )
 
-# --- Servidor HTTP para satisfazer a exigência de porta do Render ---
-class SimpleHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"Bot Vittorteccell a funcionar perfeitamente em 24/7!")
+# --- Configuração do Servidor Flask para o Render ---
+app_flask = Flask(__name__)
 
-def run_web_server():
-    port = int(os.environ.get("PORT", 10000))
-    server = HTTPServer(("0.0.0.0", port), SimpleHandler)
-    server.serve_forever()
-
-# Inicia o servidor web em segundo plano para liberar o bot de long-polling
-threading.Thread(target=run_web_server, daemon=True).start()
+@app_flask.route("/")
+def home():
+    return "Bot Vittorteccell a funcionar perfeitamente em 24/7!"
 
 # --- Configuração da Base de Dados SQLite ---
 def init_db():
@@ -92,15 +81,5 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif query.data == "ajuda":
         await query.message.reply_text("❓ Use os botões do painel para gerir as suas ordens de serviço da Vittorteccell.")
 
-def main():
-    token = "8954684493:AAHovhLYqZNipQ_krxrs0HtzxGNgzXYQn74"
-    app = ApplicationBuilder().token(token).build()
-    
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(button_handler))
-    
-    print("🤖 Bot Vittorteccell em nuvem a rodar perfeitamente!")
-    app.run_polling(drop_pending_updates=True)
-
-if __name__ == "__main__":
-    main()
+# --- Importante: Verifica se tens a biblioteca Flask instalada ---
+# Se o Render der erro de módulo flask, adiciona 'flask' ao teu ficheiro requirements.txt
