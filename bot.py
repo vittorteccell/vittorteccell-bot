@@ -93,7 +93,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text("❓ Use os botões do painel para gerir as suas ordens de serviço da Vittorteccell.")
 
 def main():
-    token = os.environ.get("TELEGRAM_TOKEN", "O_TEU_TOKEN_AQUI")
+    token = "8954684493:AAHovhLYqZNipQ_krxrs0HtzxGNgzXYQn74"
     app = ApplicationBuilder().token(token).build()
     
     app.add_handler(CommandHandler("start", start))
